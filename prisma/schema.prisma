@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  userid    String   @id @default(uuid())
+  username  String
+  name      String
+  email     String   @unique
+  createdAt DateTime @default(now())
+  password  String   @default("admin")
+  updatedAt DateTime @updatedAt
+  Media     Media[]
+}
+
+model Media {
+  mediaid         String    @id @default(uuid())
+  medianame       String
+  overview        String
+  posterpath      String
+  createdAt       DateTime  @default(now())
+  price           Int       @default(5000)
+  createdBy       Users     @relation(fields: [Userid], references: [userid])
+  Userid          String
+  type            MediaType @relation(fields: [mediaTypeTypeid], references: [typeid])
+  mediaTypeTypeid String
+  genre           Genre     @relation(fields: [genreGenreid], references: [genreid])
+  genreGenreid    String
+  origin          Origin    @relation(fields: [originOriginid], references: [originid])
+  originOriginid  String
+}
+
+model MediaType {
+  typeid      String  @id @default(uuid())
+  category    String
+  description String
+  Media       Media[]
+}
+
+model Genre {
+  genreid     String  @id @default(uuid())
+  genre       String
+  description String
+  Media       Media[]
+}
+
+model Origin {
+  originid String  @id @default(uuid())
+  country  String
+  language String
+  Media    Media[]
+}
